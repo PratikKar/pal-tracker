@@ -35,7 +35,7 @@ public class TimeEntryApiTest {
 
     @Test
     public void testCreate() throws Exception {
-        
+
         ResponseEntity<String> createResponse = restTemplate.postForEntity("/time-entries", timeEntry, String.class);
 
 

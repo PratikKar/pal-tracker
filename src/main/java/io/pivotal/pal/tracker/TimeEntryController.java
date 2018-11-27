@@ -57,7 +57,9 @@ public class TimeEntryController {
         ResponseEntity<List<TimeEntry>> entity=null;
         List<TimeEntry> temp = null;
         try {
+
             temp = inMemoryTimeEntryRepository.list();
+
         } catch (Exception e) {
             entity = new ResponseEntity<List<TimeEntry>>(temp,HttpStatus.EXPECTATION_FAILED);
         }
@@ -85,6 +87,7 @@ public class TimeEntryController {
     }
 
     @DeleteMapping(value="/time-entries/{timeEntryId}")
+    // changes for triggerring build
     public ResponseEntity<TimeEntry> delete(@PathVariable long timeEntryId) {
 
         ResponseEntity<TimeEntry> entity=null;
