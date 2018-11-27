@@ -61,11 +61,8 @@ public class TimeEntryController {
         } catch (Exception e) {
             entity = new ResponseEntity<List<TimeEntry>>(temp,HttpStatus.EXPECTATION_FAILED);
         }
-        if(temp==null){
-            entity = new ResponseEntity<List<TimeEntry>>(temp,HttpStatus.NOT_FOUND);
-        }else {
+
             entity = new ResponseEntity<List<TimeEntry>>(temp, HttpStatus.OK);
-        }
         return entity;
     }
 
