@@ -63,6 +63,7 @@ public class TimeEntryDatabase {
     public void deleteById(long tEntryId) {
 
         Iterator<TimeEntry> iterator = timeEntryList.iterator();
+        
         while  (iterator.hasNext()) {
 
             TimeEntry mp = iterator.next();
