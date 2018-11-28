@@ -43,7 +43,8 @@ public class TimeEntryDatabase {
 
     public List<TimeEntry> getRepo(){
 
-        return timeEntryList;
+        this.createRepo();
+        return timeEntryList ;
 
 
     }
@@ -90,7 +91,7 @@ public class TimeEntryDatabase {
             }
 
         }
-        return null;
+        return new TimeEntry() ;
     }
 
 

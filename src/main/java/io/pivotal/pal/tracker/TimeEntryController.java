@@ -3,9 +3,11 @@ package io.pivotal.pal.tracker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,8 +21,8 @@ public class TimeEntryController {
         this.inMemoryTimeEntryRepository=timeEntryRepository;
     }
 
-    @PostMapping(value="/time-entries")
-    public ResponseEntity create(@RequestBody TimeEntry timeEntryToCreate) {
+    @PostMapping(value="/time-entries", produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ResponseEntity create(@RequestBody TimeEntry timeEntryToCreate) {
         ResponseEntity<TimeEntry> entity=null;
         TimeEntry temp = null;
         try {
@@ -33,8 +35,8 @@ public class TimeEntryController {
 
     }
 
-    @GetMapping(value="/time-entries/{timeEntryId}")
-    public ResponseEntity<TimeEntry> read(@PathVariable Long timeEntryId) {
+    @GetMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody  ResponseEntity<TimeEntry> read(@PathVariable Long timeEntryId) {
         ResponseEntity<TimeEntry> entity=null;
         TimeEntry temp = null;
         try {
@@ -51,11 +53,12 @@ public class TimeEntryController {
 
     }
 
-    @GetMapping(value="/time-entries")
-    public ResponseEntity<List<TimeEntry>> list() {
+    @GetMapping(value="/time-entries", produces= MediaType.APPLICATION_JSON_VALUE)
+
+    public @ResponseBody ResponseEntity<List<TimeEntry>> list() {
 
         ResponseEntity<List<TimeEntry>> entity=null;
-        List<TimeEntry> temp = null;
+        List<TimeEntry> temp = new ArrayList<>();
         try {
 
             temp = inMemoryTimeEntryRepository.list();
@@ -68,8 +71,8 @@ public class TimeEntryController {
         return entity;
     }
 
-    @PutMapping(value="/time-entries/{timeEntryId}")
-    public ResponseEntity update(@PathVariable long timeEntryId,@RequestBody TimeEntry updatedTimeEntry) {
+    @PutMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody  ResponseEntity update(@PathVariable long timeEntryId,@RequestBody TimeEntry updatedTimeEntry) {
 
         ResponseEntity<TimeEntry> entity=null;
         TimeEntry temp = null;
@@ -86,9 +89,9 @@ public class TimeEntryController {
         return entity;
     }
 
-    @DeleteMapping(value="/time-entries/{timeEntryId}")
+    @DeleteMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
     // changes for triggerring build
-    public ResponseEntity<TimeEntry> delete(@PathVariable long timeEntryId) {
+    public @ResponseBody  ResponseEntity<TimeEntry> delete(@PathVariable long timeEntryId) {
 
         ResponseEntity<TimeEntry> entity=null;
         try {
