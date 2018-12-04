@@ -44,8 +44,10 @@ jobs:
         - wget -P build/libs https://github.com/$GITHUB_USERNAME/pal-tracker/releases/download/$RELEASE_TAG/pal-tracker.jar
       before_deploy:
         - chmod +x gradlew
+        - chmod +x migrate-databases.sh
         - echo "Deploying $RELEASE_TAG to review"
       before_script:
+        - chmod +x migrate-databases.sh
         - cf login -a $CF_API_URL -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s review
         - scripts/migrate-databases.sh pal-tracker .
       deploy:
