@@ -54,4 +54,4 @@ jobs:
         space: review
 before_install:
 - chmod a+x gradlew
--chmod +x gradle/wrapper/gradle-wrapper.jar
+- chmod +x gradle/wrapper/gradle-wrapper.jar
