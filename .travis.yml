@@ -53,4 +53,5 @@ jobs:
         organization: $CF_ORG
         space: review
 before_install:
-- chmod +x gradlew
+- chmod a+x gradlew
+-chmod +x gradle/wrapper/gradle-wrapper.jar
