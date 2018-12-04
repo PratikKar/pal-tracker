@@ -29,18 +29,18 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository  {
     }
 
     @Override
-    public TimeEntry find(long id) throws Exception {
+    public TimeEntry find(Long id) throws Exception {
 
         return timeEntryDatbase.findbyId(id);
     }
 
     @Override
-    public void delete(long id) throws Exception {
+    public void delete(Long id) throws Exception {
          timeEntryDatbase.deleteById(id);
     }
 
     @Override
-    public TimeEntry update(long id, TimeEntry timeEntry) throws Exception {
+    public TimeEntry update(Long id, TimeEntry timeEntry) throws Exception {
 
         timeEntryDatbase.updtaeById(id,timeEntry);
         return timeEntryDatbase.findbyId(id);
