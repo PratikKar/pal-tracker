@@ -39,7 +39,7 @@ public class JdbcTimeEntryRepository implements TimeEntryRepository {
 
             return statement;
         }, generatedKeyHolder);
-
+        System.out.println(find(generatedKeyHolder.getKey().longValue()));
         return find(generatedKeyHolder.getKey().longValue());
     }
 

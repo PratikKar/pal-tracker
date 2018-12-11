@@ -14,7 +14,8 @@ import java.util.List;
 public class TimeEntryController {
 
 
-    TimeEntryRepository inMemoryTimeEntryRepository = new InMemoryTimeEntryRepository();
+    @Autowired
+    TimeEntryRepository inMemoryTimeEntryRepository;
 
     public TimeEntryController(TimeEntryRepository timeEntryRepository) {
 
