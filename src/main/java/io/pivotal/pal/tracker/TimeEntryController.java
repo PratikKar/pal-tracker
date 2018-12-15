@@ -1,107 +1,74 @@
 package io.pivotal.pal.tracker;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/time-entries")
 public class TimeEntryController {
 
+    private final CounterService counter;
+    private final GaugeService gauge;
+    private TimeEntryRepository timeEntriesRepo;
 
-    @Autowired
-    TimeEntryRepository inMemoryTimeEntryRepository;
-
-    public TimeEntryController(TimeEntryRepository timeEntryRepository) {
-
-        this.inMemoryTimeEntryRepository=timeEntryRepository;
+    public TimeEntryController(
+            TimeEntryRepository timeEntriesRepo,
+            CounterService counter,
+            GaugeService gauge
+    ) {
+        this.timeEntriesRepo = timeEntriesRepo;
+        this.counter = counter;
+        this.gauge = gauge;
     }
 
-    @PostMapping(value="/time-entries", produces= MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity create(@RequestBody TimeEntry timeEntryToCreate) {
-        ResponseEntity<TimeEntry> entity=null;
-        TimeEntry temp = null;
-        try {
-            temp = inMemoryTimeEntryRepository.create(timeEntryToCreate);
-        } catch (Exception e) {
-            entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.EXPECTATION_FAILED);
-        }
-       entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.CREATED);
-        return entity;
+    @PostMapping
+    public ResponseEntity<TimeEntry> create(@RequestBody TimeEntry timeEntry) throws Exception {
+        TimeEntry createdTimeEntry = timeEntriesRepo.create(timeEntry);
+        counter.increment("TimeEntry.created");
+        gauge.submit("timeEntries.count", timeEntriesRepo.list().size());
 
+        return new ResponseEntity<>(createdTimeEntry, HttpStatus.CREATED);
     }
 
-    @GetMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody  ResponseEntity<TimeEntry> read(@PathVariable Long timeEntryId) {
-        ResponseEntity<TimeEntry> entity=null;
-        TimeEntry temp = null;
-        try {
-            temp = inMemoryTimeEntryRepository.find(timeEntryId);
-        } catch (Exception e) {
-            entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.EXPECTATION_FAILED);
+    @GetMapping("{id}")
+    public ResponseEntity<TimeEntry> read(@PathVariable Long id) throws Exception {
+        TimeEntry timeEntry = timeEntriesRepo.find(id);
+        if (timeEntry != null) {
+            counter.increment("TimeEntry.read");
+            return new ResponseEntity<>(timeEntry, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(temp==null){
-            entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.NOT_FOUND);
-        }else {
-            entity = new ResponseEntity<TimeEntry>(temp, HttpStatus.OK);
-        }
-        return entity;
-
     }
 
-    @GetMapping(value="/time-entries", produces= MediaType.APPLICATION_JSON_VALUE)
-
-    public @ResponseBody ResponseEntity<List<TimeEntry>> list() {
-
-        ResponseEntity<List<TimeEntry>> entity=null;
-        List<TimeEntry> temp = new ArrayList<>();
-        try {
-
-            temp = inMemoryTimeEntryRepository.list();
-
-        } catch (Exception e) {
-            entity = new ResponseEntity<List<TimeEntry>>(temp,HttpStatus.EXPECTATION_FAILED);
-        }
-
-            entity = new ResponseEntity<List<TimeEntry>>(temp, HttpStatus.OK);
-        return entity;
+    @GetMapping
+    public ResponseEntity<List<TimeEntry>> list() throws Exception {
+        counter.increment("TimeEntry.listed");
+        return new ResponseEntity<>(timeEntriesRepo.list(), HttpStatus.OK);
     }
 
-    @PutMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody  ResponseEntity update(@PathVariable long timeEntryId,@RequestBody TimeEntry updatedTimeEntry) {
-
-        ResponseEntity<TimeEntry> entity=null;
-        TimeEntry temp = null;
-        try {
-            temp = inMemoryTimeEntryRepository.update(timeEntryId,updatedTimeEntry);
-        } catch (Exception e) {
-            entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.EXPECTATION_FAILED);
+    @PutMapping("{id}")
+    public ResponseEntity<TimeEntry> update(@PathVariable Long id, @RequestBody TimeEntry timeEntry) throws Exception {
+        TimeEntry updatedTimeEntry = timeEntriesRepo.update(id, timeEntry);
+        if (updatedTimeEntry != null) {
+            counter.increment("TimeEntry.updated");
+            return new ResponseEntity<>(updatedTimeEntry, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(temp==null){
-            entity = new ResponseEntity<TimeEntry>(temp,HttpStatus.NOT_FOUND);
-        }else {
-            entity = new ResponseEntity<TimeEntry>(temp, HttpStatus.OK);
-        }
-        return entity;
     }
 
-    @DeleteMapping(value="/time-entries/{timeEntryId}", produces= MediaType.APPLICATION_JSON_VALUE)
-    // changes for triggerring build
-    public @ResponseBody  ResponseEntity<TimeEntry> delete(@PathVariable long timeEntryId) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<TimeEntry> delete(@PathVariable Long id) throws Exception {
+        timeEntriesRepo.delete(id);
+        counter.increment("TimeEntry.deleted");
+        gauge.submit("timeEntries.count", timeEntriesRepo.list().size());
 
-        ResponseEntity<TimeEntry> entity=null;
-        try {
-            inMemoryTimeEntryRepository.delete(timeEntryId);
-        } catch (Exception e) {
-            entity = new ResponseEntity<TimeEntry>(HttpStatus.EXPECTATION_FAILED);
-        }
-
-            entity = new ResponseEntity<TimeEntry>(HttpStatus.NO_CONTENT);
-        return entity;
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
