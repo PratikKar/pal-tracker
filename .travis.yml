@@ -48,6 +48,7 @@ jobs:
       before_script:
         - chmod +x scripts/migrate-databases.sh
         - cf login -a $CF_API_URL -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s review
+        - cf set-env pal-tracker MANAGEMENT_SECURITY_ENABLED false
         - scripts/migrate-databases.sh pal-tracker .
       deploy:
         provider: cloudfoundry
