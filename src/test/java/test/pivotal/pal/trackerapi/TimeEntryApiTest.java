@@ -5,7 +5,6 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 import io.pivotal.pal.tracker.PalTrackerApplication;
 import io.pivotal.pal.tracker.TimeEntry;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class TimeEntryApiTest {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
-    @Ignore
+    @Test
     public void testCreate() throws Exception {
         ResponseEntity<String> createResponse = restTemplate.postForEntity("/time-entries", timeEntry, String.class);
 
@@ -63,7 +62,7 @@ public class TimeEntryApiTest {
         assertThat(createJson.read("$.hours", Long.class)).isEqualTo(8);
     }
 
-    @Ignore
+    @Test
     public void testList() throws Exception {
         Long id = createTimeEntry();
 
@@ -82,7 +81,7 @@ public class TimeEntryApiTest {
         assertThat(readId).isEqualTo(id);
     }
 
-    @Ignore
+    @Test
     public void testRead() throws Exception {
         Long id = createTimeEntry();
 
@@ -99,7 +98,7 @@ public class TimeEntryApiTest {
         assertThat(readJson.read("$.hours", Long.class)).isEqualTo(8);
     }
 
-    @Ignore
+    @Test
     public void testUpdate() throws Exception {
         Long id = createTimeEntry();
         long projectId = 2L;
@@ -120,7 +119,7 @@ public class TimeEntryApiTest {
         assertThat(updateJson.read("$.hours", Long.class)).isEqualTo(9);
     }
 
-    @Ignore
+    @Test
     public void testDelete() throws Exception {
         Long id = createTimeEntry();
 
